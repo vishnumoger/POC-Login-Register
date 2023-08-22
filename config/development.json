@@ -1,0 +1,13 @@
+{
+    "env": "development",
+    "logLevel": 10,
+    "url": "http://localhost",
+    "port": 4000,
+    "db": {
+      "url": "mongodb+srv://narayanarajugv:jZ5hzXiTWzUhq3bc@cluster0.bt2cg2j.mongodb.net",
+      "name": "GMR"
+    },
+    "jwt": "1234567890",
+    "email": "vishnu.moger@infiquity.com",
+    "password": "airpport"
+  }
