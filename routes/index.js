@@ -75,7 +75,7 @@ router.get('/chargerBooking', async (req, res, next) => {
     try {
       const user = getUserId(req.headers.authorization);
       if (user.id) {
-        const getAllChargerBooking = await ChargerBooking.find({ isBooked: true }).exec();
+        const getAllChargerBooking = await ChargerBooking.find().exec();
         console.log(getAllChargerBooking);
 
         if (!getAllChargerBooking) {
