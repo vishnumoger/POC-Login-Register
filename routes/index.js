@@ -70,12 +70,13 @@ router.post('/login', async (req, res, next) => {
     }
   });
 
-// get Charger Booking details
+// get Charger Booking details (IsBooked = TRUE)
 router.get('/chargerBooking', async (req, res, next) => {
     try {
       const user = getUserId(req.headers.authorization);
       if (user.id) {
-        const getAllChargerBooking = await ChargerBooking.find().exec();
+        const getAllChargerBooking = await ChargerBooking.find({ isBooked: true },
+          {"chargerId":1, "bookingDate":1, "bookingTime":1, "bookingDuration":1}).exec();
         console.log(getAllChargerBooking);
 
         if (!getAllChargerBooking) {
@@ -92,13 +93,13 @@ router.get('/chargerBooking', async (req, res, next) => {
   });
 
 
-// Send Charger Booking details
+//create Charger Booking
 router.post('/chargerBooking', async (req, res, next) => {
     try {
       const user = getUserId(req.headers.authorization);
       if (user.id) {
 
-        const { iotId, chargerId, userId, userName, startTime, endTime, isBooked } = req.body;
+        const { iotId, chargerId, userId, bookingTime, bookingDuration } = req.body;
 
         const bookingDate = new Date(req.body.bookingDate)
 
@@ -106,7 +107,10 @@ router.post('/chargerBooking', async (req, res, next) => {
             iotId,
             chargerId,
             userId,
-            userName, bookingDate, startTime, endTime, isBooked
+            bookingDate, 
+            bookingTime, 
+            bookingDuration, 
+            isBooked: true
         });
 
         const savedChargerBooking= await newChargerBooking.save();

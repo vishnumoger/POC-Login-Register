@@ -5,10 +5,9 @@ const chargerbookingSchema = new Schema(
     iotId: { type: Schema.Types.ObjectId, ref: 'IOT' },
     chargerId: { type: Schema.Types.ObjectId, ref: 'Charger' },
     userId: { type: Schema.Types.ObjectId, ref: 'User' },
-    userName: { type: String, required: true },
     bookingDate: { type: Date, required: true },
-    startTime: { type: Date, required: true },
-    endTime: { type: Date, required: true },
+    bookingTime: { type: String, required: true },
+    bookingDuration: { type: Number, required: true },
     isBooked: { type: Boolean, required: true },
   },
   { timestamps: true, versionKey: false }
