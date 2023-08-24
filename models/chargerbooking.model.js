@@ -9,6 +9,7 @@ const chargerbookingSchema = new Schema(
     bookingTime: { type: String, required: true },
     bookingDuration: { type: Number, required: true },
     isBooked: { type: Boolean, required: true },
+    otp: { type: String, required: true }
   },
   { timestamps: true, versionKey: false }
 );

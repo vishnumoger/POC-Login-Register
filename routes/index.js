@@ -6,6 +6,7 @@ const { sendResponse, sendError } = require('../helpers/utils');
 const { loginSchema, userSignupSchema } = require('../schemas/user.schema');
 const User = require('../models/user.model');
 const { sign, getUserId } = require('../services/jwt');
+const generateAndSaveOtp = require('../services/otpService');
 const ChargerBooking = require('../models/chargerbooking.model');
 
 router.get('/', async (req, res) => {
@@ -103,6 +104,9 @@ router.post('/chargerBooking', async (req, res, next) => {
 
         const bookingDate = new Date(req.body.bookingDate)
 
+        const otpDoc = await generateAndSaveOtp();
+        //console.log(otpDoc)
+
         const newChargerBooking = new ChargerBooking({
             iotId,
             chargerId,
@@ -110,11 +114,12 @@ router.post('/chargerBooking', async (req, res, next) => {
             bookingDate, 
             bookingTime, 
             bookingDuration, 
-            isBooked: true
+            isBooked: true,
+            otp: otpDoc
         });
 
         const savedChargerBooking= await newChargerBooking.save();
-        console.log(savedChargerBooking);
+        //console.log(savedChargerBooking);
         return sendResponse(res, savedChargerBooking);
         
       } else {
