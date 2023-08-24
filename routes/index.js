@@ -115,7 +115,7 @@ router.post('/chargerBooking', async (req, res, next) => {
             bookingTime, 
             bookingDuration, 
             isBooked: true,
-            otp: otpDoc
+            uniqueCode: otpDoc
         });
 
         const savedChargerBooking= await newChargerBooking.save();
