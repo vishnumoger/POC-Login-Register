@@ -45,7 +45,7 @@ router.post('/login', async (req, res, next) => {
       if (error) {
         return sendError(res, error.message);
       }
-      const user = await User.findOne({ name: req.body.username }).exec();
+      const user = await User.findOne({ username: req.body.username }).exec();
       if (!user) {
         return sendError(
           res,
