@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
+var ObjectId = require('mongodb').ObjectId;
 
 const { sendResponse, sendError } = require('../helpers/utils');
 const { loginSchema, userSignupSchema } = require('../schemas/user.schema');
@@ -8,6 +9,8 @@ const User = require('../models/user.model');
 const { sign, getUserId } = require('../services/jwt');
 const generateAndSaveOtp = require('../services/otpService');
 const ChargerBooking = require('../models/chargerbooking.model');
+const IoT = require('../models/Iot.model');
+const ChargeTransaction = require('../models/chargerTransaction.model');
 
 router.get('/', async (req, res) => {
     res.send("Server started at 4000")
@@ -83,7 +86,7 @@ router.get('/chargerBooking', async (req, res, next) => {
             {"startTime" : { $gte : new Date() }}
           ]
           },
-          {"iotId":1, "startTime":1, "endTime":1, "bookingDuration":1, "isBooked":1}
+          {"_id":0, "iotId":1, "startTime":1, "endTime":1, "bookingDuration":1, "isBooked":1}
           ).exec();
         console.log(getAllChargerBooking);
 
@@ -107,7 +110,7 @@ router.post('/chargerBooking', async (req, res, next) => {
       const user = getUserId(req.headers.authorization);
       if (user.id) {
 
-        const { iotId, chargerId, userId, bookingDuration } = req.body;
+        const { iotId, userId, bookingDuration } = req.body;
 
         const startTime = new Date(req.body.startTime)
         const endTime = new Date(req.body.endTime)
@@ -117,13 +120,13 @@ router.post('/chargerBooking', async (req, res, next) => {
 
         const newChargerBooking = new ChargerBooking({
             iotId,
-            chargerId,
             userId,
             startTime, 
             endTime, 
             bookingDuration, 
             isBooked: true,
-            uniqueCode: otpDoc
+            uniqueCode: otpDoc,
+            isOTPVerified: false
         });
 
         const savedChargerBooking= await newChargerBooking.save();
@@ -137,5 +140,89 @@ router.post('/chargerBooking', async (req, res, next) => {
       sendError(res, error.message);
     }
   });
+
+  // get all IoT devices
+router.get('/getAllIoTDevices', async (req, res, next) => {
+  try {
+    const user = getUserId(req.headers.authorization);
+    if (user.id) {
+      const getAllIoT = await IoT.find().exec();
+      console.log(getAllIoT);
+
+      if (!getAllIoT) {
+        return sendError(res, 'No IoT found', 404);
+      } else {
+        return sendResponse(res, getAllIoT);
+      }
+    } else {
+      sendError(res, 'User not found');
+    }
+  } catch (error) {
+    sendError(res, error.message);
+  }
+});
+
+//for otp verification
+router.post('/verify-otp', async (req, res) => {
+  const { bookingId, otp } = req.body;
+  try {
+    const verifyOtp = await ChargerBooking.findOne({
+      _id: bookingId,
+      otp,
+      isOTPVerified: false,
+    });
+    console.log(verifyOtp)
+
+    if (!verifyOtp) {
+      return sendError(res, 'Invalid OTP');
+    }
+    verifyOtp.isOTPVerified = true;
+    await verifyOtp.save();
+    return sendResponse(res, 'OTP verified successfully');
+  } catch (error) {
+    sendError(res, error.message);
+  }
+});
+
+//startCharging
+router.post('/startCharging', async (req, res) => {
+  const { bookingId } = req.body;
+  try {
+    const BookingIdObject = ObjectId(bookingId);
+
+    const getTransactionDetails = await ChargeTransaction.findOne({
+      bookingId: BookingIdObject,
+      chargingStatus: "success"
+    });
+
+    if (getTransactionDetails) {
+      return sendResponse(res, { "transaction_id": getTransactionDetails._id, "chargingStatus": getTransactionDetails.chargingStatus,  "message": "Charging already Started"});
+    }
+    const getBookingDetails = await ChargerBooking.findOne({
+      _id: bookingId,
+      isOTPVerified: true,
+    });
+    console.log(getBookingDetails)
+
+    if (!getBookingDetails) {
+      return sendError(res, 'Booking not found');
+    }
+      const newChargeTransaction = new ChargeTransaction({
+        bookingId,
+        iotId: getBookingDetails.iotId,
+        userId: getBookingDetails.userId,
+        startTime: getBookingDetails.startTime,
+        endTime: getBookingDetails.endTime,
+        bookingDuration: getBookingDetails.bookingDuration,
+        chargingStatus: "success"
+    });
+
+    const savedChargeTransaction= await newChargeTransaction.save();
+
+    return sendResponse(res, { "transaction_id": savedChargeTransaction._id, "chargingStatus": savedChargeTransaction.chargingStatus,  "message": "Charger started successfully"});
+  } catch (error) {
+    sendError(res, error.message);
+  }
+});
 
 module.exports = router;
