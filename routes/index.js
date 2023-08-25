@@ -164,10 +164,9 @@ router.get('/getAllIoTDevices', async (req, res, next) => {
 
 //for otp verification
 router.post('/verify-otp', async (req, res) => {
-  const { bookingId, otp } = req.body;
+  const { otp } = req.body;
   try {
     const verifyOtp = await ChargerBooking.findOne({
-      _id: bookingId,
       otp,
       isOTPVerified: false,
     });
