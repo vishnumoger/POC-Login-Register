@@ -76,8 +76,15 @@ router.get('/chargerBooking', async (req, res, next) => {
     try {
       const user = getUserId(req.headers.authorization);
       if (user.id) {
-        const getAllChargerBooking = await ChargerBooking.find({ isBooked: true },
-          {"chargerId":1, "bookingDate":1, "bookingTime":1, "bookingDuration":1}).exec();
+        const getAllChargerBooking = await ChargerBooking.find(
+          {
+          $and: [
+            {"isBooked": true},
+            {"startTime" : { $gte : new Date() }}
+          ]
+          },
+          {"iotId":1, "startTime":1, "endTime":1, "bookingDuration":1, "isBooked":1}
+          ).exec();
         console.log(getAllChargerBooking);
 
         if (!getAllChargerBooking) {
@@ -100,9 +107,10 @@ router.post('/chargerBooking', async (req, res, next) => {
       const user = getUserId(req.headers.authorization);
       if (user.id) {
 
-        const { iotId, chargerId, userId, bookingTime, bookingDuration } = req.body;
+        const { iotId, chargerId, userId, bookingDuration } = req.body;
 
-        const bookingDate = new Date(req.body.bookingDate)
+        const startTime = new Date(req.body.startTime)
+        const endTime = new Date(req.body.endTime)
 
         const otpDoc = await generateAndSaveOtp();
         //console.log(otpDoc)
@@ -111,8 +119,8 @@ router.post('/chargerBooking', async (req, res, next) => {
             iotId,
             chargerId,
             userId,
-            bookingDate, 
-            bookingTime, 
+            startTime, 
+            endTime, 
             bookingDuration, 
             isBooked: true,
             uniqueCode: otpDoc
