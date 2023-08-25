@@ -225,4 +225,22 @@ router.post('/startCharging', async (req, res) => {
   }
 });
 
+router.get('/startCharging/CHARGEON', async (req, res) => {
+  try {
+    console.log('CHARGEON')
+    res.send("CHARGE ON")
+  } catch (error) {
+    sendError(res, error.message);
+  }
+})
+
+router.get('/startCharging/CHARGEOFF', async (req, res) => {
+  try {
+    console.log('CHARGEOFF')
+    res.send("CHARGE OFF")
+  } catch (error) {
+    sendError(res, error.message);
+  }
+})
+
 module.exports = router;
