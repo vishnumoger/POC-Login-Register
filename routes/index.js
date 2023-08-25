@@ -228,41 +228,7 @@ router.post('/startCharging', async (req, res) => {
 router.get('/startCharging/CHARGEON', async (req, res) => {
   try {
     console.log('CHARGEON')
-    const server = net.createServer(socket => {
-
-      const remoteAddress = socket.remoteAddress;
-      const remotePort = socket.remotePort
-    
-      console.log(`IoT device connected: ${remoteAddress}:${remotePort}`);
-    
-      socket.write('REQ_IoTID:');
-    
-      let iotId;
-    
-      socket.on('data', data => {
-    
-        const input = data.toString().trim();
-        console.log(input);
-    
-        if (input.includes("IOTID")) {
-            const iotidPattern = /IOTID:(\d{5})/;
-            const matches = input.match(iotidPattern);
-            if (matches) {
-                const iotId = parseInt(matches[1]);
-                console.log(`Received IoT ID: ${iotId}`);
-                socket.write('CHARGERON');
-            }
-        }
-      });
-    
-      socket.on('end', () => {
-        console.log(`IoT device ${iotId} disconnected`);
-      });
-    
-      socket.on('error', err => {
-        console.log(`Error with IoT device ${iotId}: ${err.message}`);
-      });
-    });
+    socket.write('CHARGERON');
     res.send("CHARGE ON")
   } catch (error) {
     sendError(res, error.message);
@@ -272,41 +238,7 @@ router.get('/startCharging/CHARGEON', async (req, res) => {
 router.get('/startCharging/CHARGEOFF', async (req, res) => {
   try {
     console.log('CHARGEOFF')
-    const server = net.createServer(socket => {
-
-      const remoteAddress = socket.remoteAddress;
-      const remotePort = socket.remotePort
-    
-      console.log(`IoT device connected: ${remoteAddress}:${remotePort}`);
-    
-      socket.write('REQ_IoTID:');
-    
-      let iotId;
-    
-      socket.on('data', data => {
-    
-        const input = data.toString().trim();
-        console.log(input);
-    
-        if (input.includes("IOTID")) {
-            const iotidPattern = /IOTID:(\d{5})/;
-            const matches = input.match(iotidPattern);
-            if (matches) {
-                const iotId = parseInt(matches[1]);
-                console.log(`Received IoT ID: ${iotId}`);
-                socket.write('CHARGEROFF');
-            }
-        }
-      });
-    
-      socket.on('end', () => {
-        console.log(`IoT device ${iotId} disconnected`);
-      });
-    
-      socket.on('error', err => {
-        console.log(`Error with IoT device ${iotId}: ${err.message}`);
-      });
-    });
+    socket.write('CHARGEROFF');
     res.send("CHARGE OFF")
   } catch (error) {
     sendError(res, error.message);
