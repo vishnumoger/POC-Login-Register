@@ -108,8 +108,8 @@ router.get('/chargerBooking', async (req, res, next) => {
 //create Charger Booking
 router.post('/chargerBooking', async (req, res, next) => {
     try {
-      const user = getUserId(req.headers.authorization);
-      if (user.id) {
+      //const user = getUserId(req.headers.authorization);
+      /*if (user.id) {*/
 
         const { iotId, userId, bookingDuration } = req.body;
 
@@ -134,9 +134,9 @@ router.post('/chargerBooking', async (req, res, next) => {
         //console.log(savedChargerBooking);
         return sendResponse(res, savedChargerBooking);
         
-      } else {
+      /*} else {
         sendError(res, 'User not found');
-      }
+      }*/
     } catch (error) {
       sendError(res, error.message);
     }
@@ -145,8 +145,8 @@ router.post('/chargerBooking', async (req, res, next) => {
   // get all IoT devices
 router.get('/getAllIoTDevices', async (req, res, next) => {
   try {
-    const user = getUserId(req.headers.authorization);
-    if (user.id) {
+    //const user = getUserId(req.headers.authorization);
+    //if (user.id) {
       const getAllIoT = await IoT.find().exec();
       console.log(getAllIoT);
 
@@ -155,9 +155,9 @@ router.get('/getAllIoTDevices', async (req, res, next) => {
       } else {
         return sendResponse(res, getAllIoT);
       }
-    } else {
+    /*} else {
       sendError(res, 'User not found');
-    }
+    }*/
   } catch (error) {
     sendError(res, error.message);
   }
