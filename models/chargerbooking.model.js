@@ -3,7 +3,6 @@ const { Schema, model } = require('mongoose');
 const chargerbookingSchema = new Schema(
   {
     iotId: { type: Schema.Types.Number, ref: 'IOT' },
-    userId: { type: Schema.Types.ObjectId, ref: 'User' },
     startTime: { type: Date, required: true },
     endTime: { type: Date, required: true },
     bookingDuration: { type: Number, required: true },

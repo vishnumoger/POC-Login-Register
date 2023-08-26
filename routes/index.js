@@ -111,7 +111,7 @@ router.post('/chargerBooking', async (req, res, next) => {
       //const user = getUserId(req.headers.authorization);
       /*if (user.id) {*/
 
-        const { iotId, userId, bookingDuration } = req.body;
+        const { iotId, bookingDuration } = req.body;
 
         const startTime = new Date(req.body.startTime)
         const endTime = new Date(req.body.endTime)
@@ -121,7 +121,6 @@ router.post('/chargerBooking', async (req, res, next) => {
 
         const newChargerBooking = new ChargerBooking({
             iotId,
-            userId,
             startTime, 
             endTime, 
             bookingDuration, 
