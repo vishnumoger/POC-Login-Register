@@ -78,8 +78,8 @@ router.post('/login', async (req, res, next) => {
 // get Charger Booking details (IsBooked = TRUE)
 router.get('/chargerBooking', async (req, res, next) => {
     try {
-      const user = getUserId(req.headers.authorization);
-      if (user.id) {
+      //const user = getUserId(req.headers.authorization);
+      /*if (user.id) {*/
         const getAllChargerBooking = await ChargerBooking.find(
           {
           $and: [
@@ -96,9 +96,9 @@ router.get('/chargerBooking', async (req, res, next) => {
         } else {
           return sendResponse(res, getAllChargerBooking);
         }
-      } else {
+      /*} else {
         sendError(res, 'User not found');
-      }
+      }*/
     } catch (error) {
       sendError(res, error.message);
     }
