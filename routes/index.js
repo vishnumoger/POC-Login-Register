@@ -167,8 +167,8 @@ router.post('/verify-otp', async (req, res) => {
   const { otp } = req.body;
   try {
     const verifyOtp = await ChargerBooking.findOne({
-      otp,
-      isOTPVerified: false,
+      'uniqueCode': otp,
+      'isOTPVerified': false
     });
     console.log(verifyOtp)
 
